@@ -1,15 +1,14 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/SQDH8b2K)
-# Chromadb 作業題目
+# Chromadb Assignment
 
-## 作業內容
+## Assignment Content
 
-請使用 **chromadb** 套件完成以下作業，將 `COA_OpenData.csv` 檔案寫入 chroma.sqlite3(需要上傳該檔案)，並在 **`student_assignment.py`** 中實作以下方法：`generate_hw01-03(question)`
-#### 創建 `.env` 文件（供學生使用）
+Please use the **chromadb** package to complete the following tasks. Write the `COA_OpenData.csv` file into chroma.sqlite3 (you need to upload this file), and implement the following method in **`student_assignment.py`**: `generate_hw01-03(question)`
+#### Create a `.env` file (for student use)
 
-在此作業中，您將需要在本地開發環境中設置必要的參數來支持程式運行。為了簡化環境變數的管理，請在項目根目錄下創建一個名為 `.env` 的文件，並在其中定義環境變數。
+In this assignment, you will need to set up the necessary parameters in your local development environment to support the program's operation. To simplify the management of environment variables, please create a file named `.env` in the project root directory and define the environment variables in it.
 
-這個 `.env` 文件的主要用途是為了讓您能夠在自己的電腦上進行實作，並為`model_configurations.py`文件提供所需的參數。參加作業時，我們會提供具體的參數值供您填寫。以下是 .env 文件的範例格式：
-
+The main purpose of this `.env` file is to allow you to implement it on your own computer and provide the necessary parameters for the `model_configurations.py` file. We will provide specific parameter values for you to fill in when participating in the assignment. Below is a sample format of the .env file:
 
 ```makefile
 AZURE_OPENAI_EMBEDDING_ENDPOINT=your_endpoint_here
@@ -19,92 +18,92 @@ AZURE_OPENAI_VERSION=your_api_version_here
 AZURE_OPENAI_DEPLOYMENT_EMBEDDING_MODEL_NAME="text-embedding-ada-002"
 AZURE_OPENAI_TYPE=your_openai_type_here
 ```
-#### 注意事項
+#### Notes
 
-- **請勿將 `.env` 文件上傳到任何版本控制系統（例如 GitHub）**，以避免洩漏敏感資訊。
-- `.env` 文件僅供您在本地環境中使用，不需要提交作業時包含在內。
+- **Do not upload the `.env` file to any version control system (e.g., GitHub)** to avoid leaking sensitive information.
+- The `.env` file is only for use in your local environment and does not need to be included when submitting the assignment.
 
 
 ---
 
-### 作業1：初始化資料庫並添加 Metadata
+### Assignment 1: Initialize the Database and Add Metadata
 
-1. **題目描述**：需要先將數據存入資料庫（ChromaDB）。這些數據包括店家的描述文字、基本資訊（如名稱、類型、地址等），這些內容將作為查詢和過濾的基礎。
-2. **步驟說明**
-   - 1. 使用指定的 CSV 檔案
-      請使用指定的 CSV 檔案，檔案名稱為 `COA_OpenData.csv`。該檔案已包含所有需要的欄位資料。
-   - 2. 建立 Collection
-         在將資料寫入資料庫之前，需要先建立或獲取一個 Collection。請確保使用以下參數來建立 Collection：
-          - **name**: `"TRAVEL"`，這是此 Collection 的名稱，用於標識此數據集的用途。
-          - **metadata**: `{"hnsw:space": "cosine"}`，這是設定查詢相似度計算的參數，`cosine` 表示使用餘弦相似度來進行距離計算。
-   - 3. Metadata 的內容
-      在初始化資料庫時，需從 CSV 檔案中提取每條記錄的相關欄位，並將其作為 Metadata 存入 ChromaDB。Metadata 包含以下資訊：
-         - **file_name**：資料來源檔案名稱（`COA_OpenData.csv`）。
-         - **name**：店家名稱。
-         - **type**：店家類型，例如 "美食"、"旅遊"。
-         - **address**：店家地址。
-         - **tel**：店家聯絡電話。
-         - **city**：店家所在城市。
-         - **town**：店家所在城鎮。
-         - **date**：資料創建日期，需從 `CreateDate` 欄位轉換為時間戳格式（秒）。
-   - 4. 文件數據（`documents`）
-     將 CSV 檔案中的 `HostWords` 欄位內容提取作為文本數據存入 ChromaDB。這些數據是查詢時進行相似度計算的核心。
-3. **方法**：實作 `generate_hw01()` 方法，回傳一個collection物件。
-4. **輸出格式**：回傳一個 collection物件`chromadb.api.models.Collection.Collection` (需要先上傳chroma.sqlite3該檔案)
+1. **Description**: You need to store the data into the database (ChromaDB) first. This data includes the store's description text, basic information (such as name, type, address, etc.), which will serve as the basis for queries and filtering.
+2. **Steps**
+   - 1. Use the specified CSV file
+      Please use the specified CSV file named `COA_OpenData.csv`. This file already contains all the required field data.
+   - 2. Create a Collection
+         Before writing data into the database, you need to create or obtain a Collection. Please ensure to use the following parameters to create the Collection:
+          - **name**: `"TRAVEL"`, this is the name of the Collection, used to identify the purpose of this dataset.
+          - **metadata**: `{"hnsw:space": "cosine"}`, this is the parameter for setting the similarity calculation, `cosine` means using cosine similarity for distance calculation.
+   - 3. Metadata Content
+      When initializing the database, you need to extract the relevant fields of each record from the CSV file and store them as Metadata in ChromaDB. Metadata includes the following information:
+         - **file_name**: Source file name (`COA_OpenData.csv`).
+         - **name**: Store name.
+         - **type**: Store type, such as "Food", "Travel".
+         - **address**: Store address.
+         - **tel**: Store contact number.
+         - **city**: Store city.
+         - **town**: Store town.
+         - **date**: Data creation date, needs to be converted to timestamp format (seconds) from the `CreateDate` field.
+   - 4. Document Data (`documents`)
+     Extract the content of the `HostWords` field from the CSV file as text data and store it in ChromaDB. This data is the core for similarity calculation during queries.
+3. **Method**: Implement the `generate_hw01()` method, returning a collection object.
+4. **Output Format**: Return a collection object `chromadb.api.models.Collection.Collection` (you need to upload the chroma.sqlite3 file first)
 ---
 
-### 作業2
+### Assignment 2
 
-1. **題目描述**：`根據文件內容查詢特定類型的店家，並過濾出相似度分數在 **0.80** 分以上的結果(請用list格式呈現，順序依照相似度分數遞減排序)`
-2. **範例**：`我想要找有關茶餐點的店家`
-3. **方法**：實作 `generate_hw02(question, city, store_type, start_date, end_date)` 方法，完成如下功能：
-   - 接受用戶輸入的問題及篩選條件，從資料庫中查詢符合條件的店家。
-   - 驗證答案時，輸入的篩選參數不一定都會使用。
-   - 僅返回符合相似度分數大於或等於 **0.80** 的店家名稱。
-   - 設定查詢結果數量為 `10`（`n_results=10`）。
-4. **參數**:
-   - `question` (str)：用戶的查詢問題，例如 `"我想要找有關茶餐點的店家"`。
-   - `city` (list)：需要篩選的城市列表，例如 `["宜蘭縣", "新北市"]`。
-   - `store_type` (list)：需要篩選的店家類型列表，例如 `["美食"]`。
-   - `start_date` (datetime.datetime)：篩選的開始日期，例如 `datetime.datetime(2024, 4, 1)`。
-   - `end_date` (datetime.datetime)：篩選的結束日期，例如 `datetime.datetime(2024, 5, 1)`。
+1. **Description**: `Query specific types of stores based on the document content and filter out results with a similarity score above **0.80** (presented in list format, sorted in descending order of similarity score)`
+2. **Example**: `I want to find stores related to tea and snacks`
+3. **Method**: Implement the `generate_hw02(question, city, store_type, start_date, end_date)` method to complete the following functions:
+   - Accept user input questions and filter conditions to query stores that meet the conditions from the database.
+   - When verifying the answer, the input filter parameters may not all be used.
+   - Only return store names with a similarity score greater than or equal to **0.80**.
+   - Set the number of query results to `10` (`n_results=10`).
+4. **Parameters**:
+   - `question` (str): User's query question, such as `"I want to find stores related to tea and snacks"`.
+   - `city` (list): List of cities to filter, such as `["Yilan County", "New Taipei City"]`.
+   - `store_type` (list): List of store types to filter, such as `["Food"]`.
+   - `start_date` (datetime.datetime): Start date for filtering, such as `datetime.datetime(2024, 4, 1)`.
+   - `end_date` (datetime.datetime): End date for filtering, such as `datetime.datetime(2024, 5, 1)`.
    
-5. **輸出格式**：
-   - 格式如下：
+5. **Output Format**:
+   - Format as follows:
      ```python
-     ['茶之鄉', '山舍茶園', '快樂農家米食坊', '海景咖啡簡餐', '田園香美食坊', '玉露茶驛站', '一佳村養生餐廳', '北海驛站石農肉粽']
+     ['Tea Village', 'Mountain Tea Garden', 'Happy Farmer Rice Shop', 'Sea View Cafe', 'Countryside Flavor Restaurant', 'Jade Dew Tea Station', 'Yijia Village Health Restaurant', 'North Sea Station Stone Meat Dumplings']
      ```
 
 ---
 
-### 作業3
+### Assignment 3
 
-1. **題目描述**：學生需要完成以下兩件事情：
-   1. 更新資料庫中指定店家的資訊。
-   2. 根據查詢條件，列出的店家名稱要根據新的參數來決定顯示的名稱，並過濾出相似度分數在 **0.80** 分以上的結果(請用list格式呈現，順序依照相似度分數遞減排序)`
-2. **方法**：
-   - 實作 `generate_hw03(question, store_name, new_store_name, city, store_type)` 方法，完成如下功能：  
-     1. 找到指定的店家，並在Metadata新增新的參數，名稱為 `new_store_name`。  
-     2. 透過問題取得的店家名稱，如果該店家的 Metadata 有 `new_store_name` 參數，請用該參數來顯示新的店家名稱。  
-     3. 設定查詢結果數量為 `10`（`n_results=10`）。
-3. **參數**:
-   - `question` (str)：用戶的查詢問題，例如 `"我想要找南投縣的田媽媽餐廳，招牌是蕎麥麵"`。
-   - `store_name` (str)：需要搜尋的店家名稱， 例如 `"耄饕客棧"`。
-   - `new_store_name` (str)：需要增加的參數名稱， 例如 `"田媽媽（耄饕客棧）"`。
-   - `city` (list)：需要篩選的城市列表，例如 `["南投縣"]`。
-   - `store_type` (list)：需要篩選的店家類型列表，例如 `["美食"]`。
-4. **輸出格式**：
-   - 格式如下
+1. **Description**: Students need to complete the following two tasks:
+   1. Update the information of a specified store in the database.
+   2. According to the query conditions, the store names listed should be determined by the new parameters, and filter out results with a similarity score above **0.80** (presented in list format, sorted in descending order of similarity score)`
+2. **Method**:
+   - Implement the `generate_hw03(question, store_name, new_store_name, city, store_type)` method to complete the following functions:  
+     1. Find the specified store and add a new parameter named `new_store_name` in the Metadata.  
+     2. For the store names obtained through the question, if the store's Metadata has the `new_store_name` parameter, please use this parameter to display the new store name.  
+     3. Set the number of query results to `10` (`n_results=10`).
+3. **Parameters**:
+   - `question` (str): User's query question, such as `"I want to find a Tien Mama restaurant in Nantou County, with buckwheat noodles as the signature dish"`.
+   - `store_name` (str): Store name to search, such as `"Mao Tao Inn"`.
+   - `new_store_name` (str): New parameter name to add, such as `"Tien Mama (Mao Tao Inn)"`.
+   - `city` (list): List of cities to filter, such as `["Nantou County"]`.
+   - `store_type` (list): List of store types to filter, such as `["Food"]`.
+4. **Output Format**:
+   - Format as follows
      ```python
-     ['田媽媽社區餐廳', '圓夢工坊', '桑園工坊', '田媽媽（耄饕客棧）', '仁上風味坊', '田媽媽美食館']
+     ['Tien Mama Community Restaurant', 'Dream Workshop', 'Mulberry Garden Workshop', 'Tien Mama (Mao Tao Inn)', 'Ren Shang Flavor Restaurant', 'Tien Mama Food Hall']
      ```
 
 ---
 
-### 注意事項
-- 必須使用 **Chromadb** 套件完成方法實作。
-- 確保輸出的格式與範例一致。
+### Notes
+- You must use the **Chromadb** package to complete the method implementation.
+- Ensure the output format is consistent with the examples.
 
-### 參考來源
+### Reference
 - [Chromadb](https://docs.trychroma.com/guides)
 
