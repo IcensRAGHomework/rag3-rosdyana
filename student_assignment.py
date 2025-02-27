@@ -166,38 +166,58 @@ def generate_hw03(question, store_name, new_store_name, city, store_type):
             embedding_function=openai_ef,
         )
 
-        # Query the collection with the question
+        # First, find and update the specified store
+        # Query to find the store to update
+        update_results = collection.query(query_texts=[question], n_results=10)
+
+        # Find and update the specified store
+        for i in range(len(update_results["ids"][0])):
+            metadata = update_results["metadatas"][0][i]
+            current_id = update_results["ids"][0][i]
+
+            if (
+                metadata["name"] == store_name
+                and (not city or metadata["city"] in city)
+                and (not store_type or metadata["type"] in store_type)
+            ):
+                # Update the store name
+                updated_metadata = metadata.copy()
+                updated_metadata["name"] = new_store_name
+                collection.update(
+                    ids=[current_id],
+                    metadatas=[updated_metadata],
+                )
+                break
+
+        # Now perform the main query to get matching stores
         query_results = collection.query(query_texts=[question], n_results=10)
 
-        # Find the most relevant store
-        most_relevant_store_id = None
-        highest_similarity = -1
+        # Process the query results
+        matching_stores = []
         for i in range(len(query_results["ids"][0])):
             metadata = query_results["metadatas"][0][i]
             similarity = 1 - query_results["distances"][0][i]
-            current_id = query_results["ids"][0][i]
 
-            # Check for filters and then check if store name matches
-            if (
-                similarity >= 0.80
-                and (not city or metadata["city"] in city)
-                and (not store_type or metadata["type"] in store_type)
-                and metadata["name"] == store_name
-            ):
-                if similarity > highest_similarity:
-                    highest_similarity = similarity
-                    most_relevant_store_id = current_id
+            # Filter by similarity score
+            if similarity < 0.80:
+                continue
 
-        # Update the store if found
-        if most_relevant_store_id:
-            collection.update(
-                ids=[most_relevant_store_id],
-                metadatas=[{"name": new_store_name}],
-            )
-            return [most_relevant_store_id]  # Return the ID of the updated store
-        else:
-            print(f"No store found with name '{store_name}' matching the criteria.")
-            return []
+            # Filter by city (if provided)
+            if city and metadata["city"] not in city:
+                continue
+
+            # Filter by store type (if provided)
+            if store_type and metadata["type"] not in store_type:
+                continue
+
+            # Add matching store name and similarity to the list
+            matching_stores.append((metadata["name"], similarity))
+
+        # Sort the results by similarity in descending order
+        matching_stores.sort(key=lambda x: x[1], reverse=True)
+
+        # Return only the store names
+        return [name for name, _ in matching_stores]
 
     except APIStatusError as api_error:
         print(f"API Status Error: {api_error}")
