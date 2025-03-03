@@ -224,15 +224,3 @@ def demo(question):
     )
 
     return collection
-
-print(generate_hw01().count())
-print(generate_hw02(question="我想要找有關茶餐點的店家",
-                    city=["宜蘭縣", "新北市"],
-                    store_type=["美食"],
-                    start_date=datetime.datetime(2024, 4, 1),
-                    end_date=datetime.datetime(2024, 5, 1)))
-print(generate_hw03(question="我想要找南投縣的田媽媽餐廳，招牌是蕎麥麵",
-                    store_name="耄饕客棧",
-                    new_store_name="田媽媽（耄饕客棧）",
-                    city=["南投縣"],
-                    store_type=["美食"]))
