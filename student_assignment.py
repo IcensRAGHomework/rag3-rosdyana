@@ -12,7 +12,7 @@ from model_configurations import get_model_configuration
 gpt_emb_version = "text-embedding-ada-002"
 gpt_emb_config = get_model_configuration(gpt_emb_version)
 
-dbpath = "./"
+dbpath = "./ChromaDbFiles"
 
 
 def generate_hw01():
